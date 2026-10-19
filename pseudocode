@@ -1,0 +1,33 @@
+
+START
+
+    SET traffic_light = "RED"
+    SET cars_waiting = 0
+
+    WHILE system_is_running
+
+        READ number_of_cars_from_sensors
+
+        UPDATE digital_twin WITH number_of_cars_from_sensors
+
+        IF cars_waiting > 10 THEN
+            SET traffic_light = "GREEN"
+        ELSE
+            SET traffic_light = "RED"
+        END IF
+
+        DISPLAY traffic_light
+        DISPLAY cars_waiting
+
+        WAIT 1 SECOND
+
+    END WHILE
+
+END
+
+
+        WAIT 1 SECOND
+
+    END WHILE
+
+END
