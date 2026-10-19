@@ -1,29 +1,91 @@
 
-START
+CLASS TrafficLight
 
-    SET traffic_light = "RED"
-    SET cars_waiting = 0
+    VARIABLES:
+        color = "RED"
+        cars_waiting = 0
+        green_duration = 30
 
-    WHILE system_is_running
-
-        READ number_of_cars_from_sensors
-
-        UPDATE digital_twin WITH number_of_cars_from_sensors
+    METHOD detectTraffic(number_of_cars)
+        cars_waiting = number_of_cars
 
         IF cars_waiting > 10 THEN
-            SET traffic_light = "GREEN"
+            color = "GREEN"
         ELSE
-            SET traffic_light = "RED"
+            color = "RED"
         END IF
+    END METHOD
 
-        DISPLAY traffic_light
-        DISPLAY cars_waiting
+    METHOD changeLight()
+        IF color == "GREEN" THEN
+            DISPLAY "Cars may proceed"
+        ELSE
+            DISPLAY "Cars must stop"
+        END IF
+    END METHOD
 
-        WAIT 1 SECOND
+    METHOD displayStatus()
+        DISPLAY "Traffic Light: ", color
+        DISPLAY "Cars Waiting: ", cars_waiting
+    END METHOD
 
-    END WHILE
+END CLASS
 
-END
+
+CLASS TrafficDigitalTwin
+
+    VARIABLES:
+        simulated_cars = 0
+        simulation_running = TRUE
+        simulation_time = 0
+        traffic_light = TrafficLight()
+
+    METHOD updateModel(new_car_count)
+        simulated_cars = new_car_count
+
+        traffic_light.detectTraffic(simulated_cars)
+    END METHOD
+
+    METHOD runSimulation()
+        WHILE simulation_running == TRUE
+
+            simulation_time = simulation_time + 1
+
+            simulated_cars = simulated_cars + 2
+
+            IF simulated_cars > 20 THEN
+                simulated_cars = 0
+            END IF
+
+            updateModel(simulated_cars)
+            traffic_light.changeLight()
+            traffic_light.displayStatus()
+
+            IF simulation_time >= 10 THEN
+                simulation_running = FALSE
+            END IF
+
+        END WHILE
+    END METHOD
+
+    METHOD showSimulationResults()
+        DISPLAY "Simulation Time: ", simulation_time
+        DISPLAY "Cars in Digital Twin: ", simulated_cars
+        DISPLAY "Final Traffic Light: ", traffic_light.color
+    END METHOD
+
+END CLASS
+
+
+MAIN PROGRAM
+
+    twin = TrafficDigitalTwin()
+
+    twin.runSimulation()
+
+    twin.showSimulationResults()
+
+END PROGRAM
 
 
         WAIT 1 SECOND
