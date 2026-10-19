@@ -1,0 +1,63 @@
+#"real" data
+class TrafficLight:
+    def __init__(self):
+        self.color = "red"
+        self.cars_waiting = 0
+        self.green_duration = 30
+#waiting at a traffic sign
+    def detect_traffic(self, number_of_cars):
+        self.cars_waiting = number_of_cars
+
+        if self.cars_waiting > 10:
+            self.color = "green"
+        else:
+            self.color = "red"
+
+    def change_light(self):
+        if self.color == "green":
+            print("Cars may proceed")
+        else:
+            print("Cars must stop")
+
+    def display_status(self):
+        print("Traffic Light:", self.color)
+        print("Cars Waiting:", self.cars_waiting)
+
+#simulation data 
+class TrafficDigitalTwin:
+    def __init__(self):
+        self.simulated_cars = 0
+        self.simulation_running = True
+        self.simulation_time = 0
+        self.traffic_light = TrafficLight()
+
+    def update_model(self, new_car_count):
+        self.simulated_cars = new_car_count
+        self.traffic_light.detect_traffic(self.simulated_cars)
+
+    def run_simulation(self):
+        while self.simulation_running:
+            self.simulation_time += 1
+            self.simulated_cars += 2
+
+            if self.simulated_cars > 20:
+                self.simulated_cars = 0
+
+            self.update_model(self.simulated_cars)
+            self.traffic_light.change_light()
+            self.traffic_light.display_status()
+
+            if self.simulation_time >= 10:
+                self.simulation_running = False
+
+    def show_simulation_results(self):
+        print("\n--- Simulation Results ---")
+        print("Simulation Time:", self.simulation_time)
+        print("Cars in Digital Twin:", self.simulated_cars)
+        print("Final Traffic Light:", self.traffic_light.color)
+
+
+#output
+twin = TrafficDigitalTwin()
+twin.run_simulation()
+twin.show_simulation_results()
